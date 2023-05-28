@@ -91,3 +91,66 @@ let style = document.createElement('style');
 style.appendChild(document.createTextNode(css));
 document.head.appendChild(style);;
 }
+// List of div IDs to cycle through
+const divIds = ['productTitle', 'centerCol', 'prodDetails','productDescription_feature_div'];
+
+// Helper function to filter out unwanted elements
+function shouldIncludeElement(element) {
+  const tagName = element.tagName.toLowerCase();
+  const classNames = element.className;
+
+  // Exclude specific HTML tags or classes from extraction
+  if (tagName === 'script' || tagName === 'style') {
+    return false;
+  }
+
+  if (classNames && typeof classNames === 'string' && classNames.includes('exclude-class')) {
+    return false;
+  }
+
+  // Check if the element is hidden
+  const computedStyle = window.getComputedStyle(element);
+  if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+    return false;
+  }
+
+  return true;
+}
+
+// Function to recursively extract and concatenate visible text content from an element and its descendants
+function extractVisibleTextFromElement(element, accumulatedText = '') {
+  for (const childNode of element.childNodes) {
+    if (childNode.nodeType === Node.TEXT_NODE) {
+      // Extract text content from text node and concatenate it
+      const textContent = childNode.textContent.trim();
+      if (textContent !== '') {
+        accumulatedText += (accumulatedText ? ' ' : '') + textContent;
+      }
+    } else if (childNode.nodeType === Node.ELEMENT_NODE) {
+      if (shouldIncludeElement(childNode)) {
+        // Recursively extract and concatenate visible text from child element
+        accumulatedText = extractVisibleTextFromElement(childNode, accumulatedText);
+      }
+    }
+  }
+
+  return accumulatedText;
+}
+
+// Variable to store the concatenated visible texts
+let concatenatedText = '';
+
+// Loop through the list of div IDs
+for (const divId of divIds) {
+  // Select the div element based on the ID
+  const targetDiv = document.querySelector(`#${divId}`);
+
+  // Check if the target div exists
+  if (targetDiv) {
+    // Extract and concatenate the visible text content recursively
+    const extractedText = extractVisibleTextFromElement(targetDiv);
+    concatenatedText += (concatenatedText ? ' ' : '') + extractedText;
+  }
+}
+
+console.log(concatenatedText);
