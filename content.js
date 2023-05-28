@@ -1,6 +1,6 @@
 
 //find the price element
-let apexElement = document.getElementById('apex_desktop');
+let apexElement = document.getElementById('apex_desktop_qualifiedBuybox');
 
 
 if (apexElement) {
