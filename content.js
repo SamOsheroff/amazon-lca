@@ -154,3 +154,33 @@ for (const divId of divIds) {
 }
 
 console.log(concatenatedText);
+
+//llm call to summarize description.
+
+const url = 'http://127.0.0.1:5000/'; // Replace with your API endpoint URL
+
+// Data to be sent in the request body
+const data = {
+  prompt: concatenatedText
+};
+
+// Options for the fetch request
+const options = {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+};
+
+// Make the POST request
+fetch(url, options)
+  .then(response => response.json())
+  .then(data => {
+    // Handle the response data
+    console.log('Response:', data);
+  })
+  .catch(error => {
+    // Handle any errors
+    console.error('Error:', error);
+  });
